@@ -58,7 +58,10 @@ http://127.0.0.1:3000
 1. **Add Expenses**: Form input with full client-side and backend validation (Title, Category selection, Amount check, note, and default today date).
 2. **View Expenses**: List rendering sorted by date (most recent first) showing all fields.
 3. **Edit & Delete**: CRUD capability with pre-filled inputs and verification prompts.
-4. **Monthly Summary**: Calculates total current month spending and provides category breakdown progress bars.
+4. **Analytical Summary Dashboard**:
+   * **Total Monthly Spending**: Displays the current calendar month's total expenditures.
+   * **Live KPI Metrics**: Computes Average Transaction Cost, Largest Single Expense (displaying its description title), and the Top Spending Category dynamically based on current search filters.
+   * **Category-wise Visual Breakdown**: Progress bar indicators showing exact spending amounts and percentage weight distributions across categories (Food, Transport, Bills, Shopping, Entertainment, Other).
 5. **Advanced Filters**: Real-time searching by title, category, and date range (`from` to `to`) with client-side debouncing to reduce API load.
 6. **Bonus Recruiter Features**:
    * **⚡ Seed Data**: Generates 12 realistic mock items mapped to logical categories and Rupee amounts with one click.
