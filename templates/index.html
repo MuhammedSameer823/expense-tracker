@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spender • Personal Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- App Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar / Top Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">$$</div>
+        <span class="logo-text">Spender</span>
+      </div>
+      <div class="header-actions" style="display: flex; gap: 10px;">
+        <button id="seed-data-btn" class="btn btn-secondary" onclick="seedMockData()">
+          ⚡ Seed Data
+        </button>
+        <button id="add-expense-trigger" class="btn btn-primary" onclick="openModal()">
+          <span class="btn-icon">+</span> Add Expense
+        </button>
+      </div>
+    </header>
+
+    <main class="app-content">
+      
+      <!-- Top Widgets Row -->
+      <section class="summary-section">
+        <!-- Total Spent Card -->
+        <div class="card card-total">
+          <div class="card-header">
+            <h3>Monthly Spending</h3>
+            <span id="current-month-label" class="badge badge-date">June 2026</span>
+          </div>
+          <div class="total-amount-display">
+            <span class="currency-symbol">₹</span>
+            <span id="total-spent-value">0.00</span>
+          </div>
+          <div class="card-footer-info">
+            <p>Calculated from expenses in the current month.</p>
+          </div>
+        </div>
+
+        <!-- Dynamic Metrics Card Group -->
+        <div class="metrics-container">
+          <div class="card card-metric">
+            <h4>Average Expense</h4>
+            <div class="metric-value">₹<span id="metric-avg">0.00</span></div>
+          </div>
+          <div class="card-metric card">
+            <h4>Largest Expense</h4>
+            <div class="metric-value">₹<span id="metric-max">0.00</span></div>
+            <div class="metric-sub" id="metric-max-title">No items</div>
+          </div>
+          <div class="card-metric card">
+            <h4>Top Category</h4>
+            <div class="metric-value" id="metric-top-cat">—</div>
+          </div>
+        </div>
+
+        <!-- Category Breakdown Card -->
+        <div class="card card-breakdown">
+          <div class="card-header">
+            <h3>Category Breakdown</h3>
+            <span class="subheader">Current Month</span>
+          </div>
+          <div id="breakdown-list" class="breakdown-list">
+            <!-- Category bars will be injected here dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Filter Panel & Data Section -->
+      <section class="data-section">
+        
+        <!-- Filters Card -->
+        <div class="card card-filters">
+          <div class="filters-header">
+            <h4>Filters & Search</h4>
+            <button id="clear-filters-btn" class="btn btn-secondary btn-sm" onclick="clearFilters()">Clear Filters</button>
+          </div>
+          <div class="filters-grid">
+            <div class="filter-group">
+              <label for="filter-search">Search Title</label>
+              <input type="text" id="filter-search" placeholder="Search description..." oninput="handleFilterChange()">
+            </div>
+            
+            <div class="filter-group">
+              <label for="filter-category">Category</label>
+              <select id="filter-category" onchange="handleFilterChange()">
+                <option value="">All Categories</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-start-date">From Date</label>
+              <input type="date" id="filter-start-date" onchange="handleFilterChange()">
+            </div>
+
+            <div class="filter-group">
+              <label for="filter-end-date">To Date</label>
+              <input type="date" id="filter-end-date" onchange="handleFilterChange()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Expenses List Card -->
+        <div class="card card-table">
+          <div class="table-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <h4>All Expenses</h4>
+              <span id="expenses-count" class="badge">0 items</span>
+            </div>
+            <button id="export-csv-btn" class="btn btn-secondary btn-sm" onclick="exportToCSV()">
+              📥 Export CSV
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="expenses-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%">Title</th>
+                  <th style="width: 15%">Amount</th>
+                  <th style="width: 15%">Category</th>
+                  <th style="width: 15%">Date</th>
+                  <th style="width: 20%">Note</th>
+                  <th style="width: 10%" class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expenses-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-state" class="empty-state hidden">
+            <div class="empty-icon">💸</div>
+            <h5>No expenses found</h5>
+            <p>Try resetting your filters or add a new expense to get started.</p>
+          </div>
+          
+          <!-- Loading State -->
+          <div id="loading-state" class="loading-state">
+            <div class="spinner"></div>
+            <p>Retrieving expenses...</p>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="expense-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Expense</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="expense-form" onsubmit="handleFormSubmit(event)">
+        <!-- Hidden input for ID (in edit mode) -->
+        <input type="hidden" id="expense-id">
+        
+        <div class="form-group">
+          <label for="expense-title">Title *</label>
+          <input type="text" id="expense-title" required placeholder="e.g., Coffee at Starbucks">
+          <span id="error-title" class="field-error"></span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="expense-amount">Amount *</label>
+            <div class="amount-input-wrapper">
+              <span class="currency-prefix">₹</span>
+              <input type="number" id="expense-amount" step="0.01" min="0" required placeholder="0.00">
+            </div>
+            <span id="error-amount" class="field-error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="expense-category">Category *</label>
+            <select id="expense-category" required>
+              <option value="" disabled selected>Select category</option>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Other">Other</option>
+            </select>
+            <span id="error-category" class="field-error"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="expense-date">Date *</label>
+          <input type="date" id="expense-date" required>
+          <span id="error-date" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="expense-note">Note (Optional)</label>
+          <textarea id="expense-note" rows="3" placeholder="Add additional details..."></textarea>
+          <span id="error-note" class="field-error"></span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" id="submit-btn" class="btn btn-primary">Save Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- JavaScript asset link -->
+  <script src="/static/script.js" defer></script>
+  <!-- Mock data seeder script (safe to remove if not needed) -->
+  <script src="/static/seeder.js" defer></script>
+</body>
+</html>
