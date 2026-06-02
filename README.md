@@ -6,7 +6,7 @@ A high-performance personal expense tracker web application built with a **FastA
 
 ## How to Run It (Starting from GitHub Clone)
 
-Follow these exact commands to clone the repository and run the application locally on your laptop.
+Follow these exact commands to clone the repository and run the application locally on your laptop:
 
 ### 1. Clone the Repository & Navigate In
 Open your terminal and run:
@@ -14,28 +14,17 @@ Open your terminal and run:
 git clone <YOUR_GITHUB_REPO_URL>
 cd <YOUR_REPO_NAME>
 ```
-*(Replace `<YOUR_GITHUB_REPO_URL>` and `<YOUR_REPO_NAME>` with your actual repository link and folder name).*
+*(Replace `<YOUR_GITHUB_REPO_URL>` and `<YOUR_REPO_NAME>` with your actual repository link).*
 
-### 2. Database Setup (Supabase)
-1. Go to your [Supabase Dashboard](https://supabase.com) and create a free project.
-2. In the left sidebar of your project, navigate to the **SQL Editor** -> click **New Query**.
-3. Copy the contents of the file **[supabase_setup.sql](file:///c:/Users/TUF/OneDrive/Desktop/SDE test/supabase_setup.sql)** from this repository, paste it into the editor, and click **Run**. This sets up the table, constraints, performance indexes, and seeds it with initial realistic Rupee data.
+*Note: The project is pre-configured with a hosted cloud database on Supabase (the `.env` file is included in this repository), so you do not need to create a database or run SQL setup scripts.*
 
-### 3. Configure Environment Variables
-Create a file named `.env` in the root folder of the cloned repository with the following configuration:
-```env
-PORT=3000
-SUPABASE_URL=https://your-project-id.supabase.co
-SUPABASE_KEY=your-supabase-anon-or-service-key
-```
-
-### 4. Install Dependencies
+### 2. Install Dependencies
 Install the required Python packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Launch the Server
+### 3. Launch the Server
 Start the local development server:
 ```bash
 python app/main.py
